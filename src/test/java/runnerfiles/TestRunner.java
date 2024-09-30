@@ -8,7 +8,12 @@ import org.junit.runner.RunWith;
 @CucumberOptions(
         features = "src/test/resources/apidemosapp",
         glue = {"stepdefinitions"},
+        monochrome = true,
         dryRun = false,
-        plugin = {"pretty", "html:target/cucumber-reports.html"})
+//        tags = "@REGRESSIONTEST or @SMOKE",
+//        tags = "@REGRESSIONTEST and @SMOKE",
+//        tags = "@REGRESSIONTEST and not @SMOKE",
+        tags = "(@REGRESSIONTEST or @SANITY) and not @SMOKE",
+        plugin = {"pretty", "html:target/cucumber-reports.html","json:target/cucumber-reports.json"})
 public class TestRunner {
 }

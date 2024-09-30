@@ -80,9 +80,9 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.2.5</version>
                 <configuration>
-                   <includes>
+                  <!-- <includes>
                        <include>**/TestRunner.java</include>
-                   </includes>
+                   </includes>-->
                 </configuration>
             </plugin>
         </plugins>
