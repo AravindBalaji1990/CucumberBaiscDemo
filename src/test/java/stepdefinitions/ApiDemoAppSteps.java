@@ -1,5 +1,6 @@
 package stepdefinitions;
 
+import apipagelocator.ApiPageLocator;
 import com.aventstack.extentreports.ExtentTest;
 import com.aventstack.extentreports.Status;
 import io.appium.java_client.AppiumBy;
@@ -26,6 +27,8 @@ public class ApiDemoAppSteps {
     public ExtentTest test;
     public AndroidDriver driver;
     Scenario scenario;
+    ApiPageLocator apiPageLocator;
+
 
     @Before
     public void beforescenario(Scenario scenario) throws MalformedURLException, InterruptedException {
@@ -62,27 +65,25 @@ public class ApiDemoAppSteps {
         Thread.sleep(3000);
         scenario.log("test");
         ExtentReportManager.createTest(String.valueOf(scenario.getName())).log(Status.INFO, "Started the appium server");
+        apiPageLocator = new ApiPageLocator(driver) ;
     }
 
     @When("User clicks on the text button")
     public void user_clicks_on_the_text_button() {
-        Assert.assertTrue(driver.findElement(AppiumBy.xpath("//android.widget.TextView[@content-desc=\"Text\"]")).isDisplayed());
-
-        driver.findElement(AppiumBy.xpath("//android.widget.TextView[@content-desc=\"Text\"]")).click();
-        ExtentReportManager.createTest(scenario.getId()).log(Status.INFO, "Started the scenario clicked on : " +driver.findElement(AppiumBy.xpath("//android.widget.TextView[@content-desc=\"Text\"]")));
+        apiPageLocator.validateElementAndClick();
+        ExtentReportManager.createTest(scenario.getId()).log(Status.INFO, "Started the scenario clicked on ");
 
     }
 
     @When("User validates the text screen")
     public void user_validates_the_text_screen() {
-        Assert.assertTrue(driver.findElement(AppiumBy.xpath("//android.widget.TextView[@content-desc=\"KeyEventText\"]\n")).isDisplayed());
+        apiPageLocator.validateElementKeyEvent();
 
     }
 
     @When("User validates the text screen with Linkify")
     public void user_validates_the_text_screen_with_linkify() {
-        Assert.assertTrue(driver.findElement(AppiumBy.xpath("//android.widget.TextView[@content-desc=\"Linkify\"]")).isDisplayed());
-
+        apiPageLocator.validateElementLinkify();
     }
 
     @Then("User closes the app")
