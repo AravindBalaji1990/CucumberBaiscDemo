@@ -2,8 +2,8 @@ Feature:  Test the Api Demo App
   test the app open
   check for the button text is available
 
-  Background:
-    Given User open the api demos app
+#  Background:
+#    Given User open the api demos app
 
     @SIT
   Scenario: validate the Text button

@@ -13,7 +13,8 @@ import org.junit.runner.RunWith;
 //        tags = "@REGRESSIONTEST or @SMOKE",
 //        tags = "@REGRESSIONTEST and @SMOKE",
 //        tags = "@REGRESSIONTEST and not @SMOKE",
-        tags = "(@REGRESSIONTEST or @SANITY) and not @SMOKE",
+//        tags = "(@REGRESSIONTEST or @SANITY) and not @SMOKE",
+        tags = "@SIT",
         plugin = {"pretty", "html:target/cucumber-reports.html","json:target/cucumber-reports.json"})
 public class TestRunner {
 }

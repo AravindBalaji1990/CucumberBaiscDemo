@@ -1,10 +1,15 @@
 package stepdefinitions;
 
+import com.aventstack.extentreports.ExtentTest;
+import com.aventstack.extentreports.Status;
 import io.appium.java_client.AppiumBy;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.android.options.UiAutomator2Options;
 import io.appium.java_client.remote.AutomationName;
 import io.cucumber.datatable.DataTable;
+import io.cucumber.java.After;
+import io.cucumber.java.Before;
+import io.cucumber.java.Scenario;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -18,7 +23,28 @@ import java.util.Map;
 
 public class ApiDemoAppSteps {
 
+    public ExtentTest test;
     public AndroidDriver driver;
+    Scenario scenario;
+
+    @Before
+    public void beforescenario(Scenario scenario) throws MalformedURLException, InterruptedException {
+        this.scenario = scenario;
+        test = ExtentReportManager.createTest(scenario.getName());
+        test.log(Status.INFO, "Starting scenario : " + scenario.getName());
+        user_open_the_api_demos_app();
+    }
+
+    @After
+    public void afterScenario(Scenario scenario){
+        if(scenario.isFailed()){
+            test.log(Status.FAIL,"Sceanrio Failed: " + scenario.getName());
+        }else{
+            test.log(Status.PASS,"Sceanrio Passed: " + scenario.getName());
+        }
+
+        ExtentReportManager.flush();
+    }
 
     @Given("User open the api demos app")
     public void user_open_the_api_demos_app() throws MalformedURLException, InterruptedException {
@@ -34,6 +60,8 @@ public class ApiDemoAppSteps {
         // calling the andorid driver to run the app
         driver = new AndroidDriver(new URL("http://127.0.0.1:4723"), options);
         Thread.sleep(3000);
+        scenario.log("test");
+        ExtentReportManager.createTest(String.valueOf(scenario.getName())).log(Status.INFO, "Started the appium server");
     }
 
     @When("User clicks on the text button")
@@ -41,6 +69,7 @@ public class ApiDemoAppSteps {
         Assert.assertTrue(driver.findElement(AppiumBy.xpath("//android.widget.TextView[@content-desc=\"Text\"]")).isDisplayed());
 
         driver.findElement(AppiumBy.xpath("//android.widget.TextView[@content-desc=\"Text\"]")).click();
+        ExtentReportManager.createTest(scenario.getId()).log(Status.INFO, "Started the scenario clicked on : " +driver.findElement(AppiumBy.xpath("//android.widget.TextView[@content-desc=\"Text\"]")));
 
     }
 
