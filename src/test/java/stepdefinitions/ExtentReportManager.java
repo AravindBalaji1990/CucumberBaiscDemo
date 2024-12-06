@@ -3,6 +3,7 @@ package stepdefinitions;
 import com.aventstack.extentreports.ExtentReports;
 import com.aventstack.extentreports.ExtentTest;
 import com.aventstack.extentreports.reporter.ExtentSparkReporter;
+import com.aventstack.extentreports.reporter.configuration.Theme;
 
 public class ExtentReportManager {
 
@@ -11,8 +12,10 @@ public class ExtentReportManager {
 
     public static ExtentReports createIntance() {
         ExtentSparkReporter reporter = new ExtentSparkReporter("target/ExtentReport.html");
-        reporter.config().setReportName("Smaple Report Appium Cucumber");
+        reporter.config().setReportName("Sample Report Appium Cucumber");
         reporter.config().setDocumentTitle("Cucumber Report Integration");
+        reporter.config().setTheme(Theme.STANDARD);
+
 
         extent = new ExtentReports();
         extent.attachReporter(reporter);

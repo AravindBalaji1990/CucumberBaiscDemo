@@ -2,6 +2,7 @@ package stepdefinitions;
 
 import apipagelocator.ApiPageLocator;
 import com.aventstack.extentreports.ExtentTest;
+import com.aventstack.extentreports.MediaEntityBuilder;
 import com.aventstack.extentreports.Status;
 import io.appium.java_client.AppiumBy;
 import io.appium.java_client.android.AndroidDriver;
@@ -9,16 +10,25 @@ import io.appium.java_client.android.options.UiAutomator2Options;
 import io.appium.java_client.remote.AutomationName;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.After;
+import io.cucumber.java.AfterStep;
 import io.cucumber.java.Before;
 import io.cucumber.java.Scenario;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import org.junit.Assert;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.io.FileHandler;
 
+import java.io.File;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 
@@ -39,14 +49,25 @@ public class ApiDemoAppSteps {
     }
 
     @After
-    public void afterScenario(Scenario scenario){
-        if(scenario.isFailed()){
-            test.log(Status.FAIL,"Sceanrio Failed: " + scenario.getName());
-        }else{
-            test.log(Status.PASS,"Sceanrio Passed: " + scenario.getName());
+    public void afterScenario(Scenario scenario) {
+        if (scenario.isFailed()) {
+            test.log(Status.FAIL, "Sceanrio Failed: " + scenario.getName());
+        } else {
+            test.log(Status.PASS, "Sceanrio Passed: " + scenario.getName());
         }
 
         ExtentReportManager.flush();
+        driver.quit();
+    }
+
+    @AfterStep
+    public void afterStep(Scenario scenario) throws IOException {
+        TakesScreenshot ts = (TakesScreenshot) driver;
+        byte[] screenshotbyte = ts.getScreenshotAs(OutputType.BYTES);
+        String screenshotpath = System.getProperty("user.dir")+"/src/test/resources/screenshots/" + this.scenario.getName() + ".png";
+        Path path = Paths.get(screenshotpath);
+        Files.write(path,screenshotbyte);
+        test.log(Status.INFO, "Scenario Details for screenshot", MediaEntityBuilder.createScreenCaptureFromPath(screenshotpath).build());
     }
 
     @Given("User open the api demos app")
@@ -65,13 +86,13 @@ public class ApiDemoAppSteps {
         Thread.sleep(3000);
         scenario.log("test");
         ExtentReportManager.createTest(String.valueOf(scenario.getName())).log(Status.INFO, "Started the appium server");
-        apiPageLocator = new ApiPageLocator(driver) ;
+        apiPageLocator = new ApiPageLocator(driver);
     }
 
     @When("User clicks on the text button")
     public void user_clicks_on_the_text_button() {
         apiPageLocator.validateElementAndClick();
-        ExtentReportManager.createTest(scenario.getId()).log(Status.INFO, "Started the scenario clicked on ");
+//        ExtentReportManager.createTest(scenario.getName()).log(Status.INFO, "Started the scenario clicked on ");
 
     }
 
@@ -95,13 +116,13 @@ public class ApiDemoAppSteps {
 
     @When("User validates the text screen with button {string}")
     public void user_validates_the_text_screen_with_button(String data) {
-        WebElement element = driver.findElement(AppiumBy.xpath("//android.widget.TextView[@content-desc='"+data+"']"));
+        WebElement element = driver.findElement(AppiumBy.xpath("//android.widget.TextView[@content-desc='" + data + "']"));
         Assert.assertTrue(element.isDisplayed());
     }
 
     @When("User validates the text screen with list of options from the {}")
     public void validateOptionsfromScreen(String data) {
-        WebElement element = driver.findElement(AppiumBy.xpath("//android.widget.TextView[@content-desc='"+data+"']"));
+        WebElement element = driver.findElement(AppiumBy.xpath("//android.widget.TextView[@content-desc='" + data + "']"));
         Assert.assertTrue(element.isDisplayed());
     }
 
@@ -114,9 +135,9 @@ public class ApiDemoAppSteps {
         // Double, Byte, Short, Long, BigInteger or BigDecimal.
         //
         // For other transformations you can register a DataTableType.
-        List<Map<String,String>> data = dataTable.asMaps(String.class,String.class);
-        for(Map<String, String> dataoptions: data){
-            WebElement element = driver.findElement(AppiumBy.xpath("//android.widget.TextView[@content-desc='"+dataoptions.get("options")+"']"));
+        List<Map<String, String>> data = dataTable.asMaps(String.class, String.class);
+        for (Map<String, String> dataoptions : data) {
+            WebElement element = driver.findElement(AppiumBy.xpath("//android.widget.TextView[@content-desc='" + dataoptions.get("options") + "']"));
             Assert.assertTrue(element.isDisplayed());
         }
 
